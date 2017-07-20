@@ -6,8 +6,9 @@ put melons in a shopping cart.
 Authors: Joel Burton, Christian Fernandez, Meggie Mahnken, Katie Byers.
 """
 
+from flask_debugtoolbar import DebugToolbarExtension
 
-from flask import Flask, render_template, redirect, flash
+from flask import Flask, render_template, redirect, flash, session
 import jinja2
 
 import melons
@@ -17,7 +18,7 @@ app = Flask(__name__)
 
 # A secret key is needed to use Flask sessioning features
 
-app.secret_key = 'this-should-be-something-unguessable'
+app.secret_key = 'this is so very mysterious'
 
 # Normally, if you refer to an undefined variable in a Jinja template,
 # Jinja silently ignores this. This makes debugging difficult, so we'll
@@ -39,7 +40,6 @@ def list_melons():
     """Return page showing all the melons ubermelon has to offer"""
 
     melon_list = melons.get_all()
-    print melon_list
     return render_template("all_melons.html",
                            melon_list=melon_list)
 
@@ -96,10 +96,16 @@ def add_to_cart(melon_id):
     #
     # - check if a "cart" exists in the session, and create one (an empty
     #   dictionary keyed to the string "cart") if not
+    if "cart" not in session:
+        session["cart"] = {}
+    # stopped at Task 3 in shopping site instructions
+
+
     # - check if the desired melon id is the cart, and if not, put it in
     # - increment the count for that melon id by 1
     # - flash a success message
     # - redirect the user to the cart page
+    print session.get("cart")
 
     return "Oops! This needs to be implemented!"
 
@@ -148,4 +154,6 @@ def checkout():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.debug = True
+    DebugToolbarExtension(app)
+    app.run()
